@@ -1,0 +1,143 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#>.
+@prefix doap: <http://usefulinc.com/ns/doap#>.
+@prefix epp: <http://lv2plug.in/ns/ext/port-props#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix mod: <http://moddevices.com/ns/mod#>.
+@prefix modgui: <http://moddevices.com/ns/modgui#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix urid: <http://lv2plug.in/ns/ext/urid#> .
+@prefix pprop: <http://lv2plug.in/ns/ext/port-props#> .
+@prefix rsz: <http://lv2plug.in/ns/ext/resize-port#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix log: <http://lv2plug.in/ns/ext/log#> .
+@prefix state: <http://lv2plug.in/ns/ext/state#> .
+@prefix units: <http://lv2plug.in/ns/extensions/units#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix plug: <http://moddevices.com/plugins/mod-devel/mod-advanced-control-to-cv#> .
+
+plug:unitstring
+    a lv2:Parameter ;
+    rdfs:label "Unit Text" ;
+    rdfs:range atom:String .
+
+<http://moddevices.com/plugins/mod-devel/mod-advanced-control-to-cv>
+    a lv2:Plugin, mod:ControlVoltagePlugin;
+
+    mod:brand "MOD";
+    mod:label "advanced control to cv";
+    doap:name "advanced control to cv";
+    doap:license "GPL v2+";
+    doap:developer [
+        foaf:name "Jan Janssen";
+        foaf:homepage <>;
+        foaf:mbox <mailto:jan@moddevices.com>;
+    ];
+
+    doap:maintainer [
+        foaf:name "MOD";
+        foaf:homepage <http://moddevices.com>;
+        foaf:mbox <mailto:jan@moddevices.com>;
+    ];
+
+    lv2:requiredFeature urid:map;
+    lv2:optionalFeature lv2:hardRTCapable, state:loadDefaultState, <http://moddevices.com/ns/hmi#WidgetControl>;
+    lv2:extensionData <http://moddevices.com/ns/hmi#PluginNotification>, state:interface;
+
+    lv2:minorVersion 1;
+    lv2:microVersion 0;
+
+    rdfs:comment """
+
+    A plugin that outputs a CV signal, but has the options to change HMI fields
+
+    """;
+
+    lv2:port 
+    [
+        a lv2:OutputPort, lv2:CVPort, mod:CVPort;
+        lv2:index 0;
+        lv2:minimum 0.0 ;
+        lv2:maximum 10.0 ;
+        lv2:symbol "Cvoutput";
+        lv2:name "CV Output";
+    ],
+    [
+        a lv2:InputPort ,
+        lv2:ControlPort ;
+        lv2:index 1 ;
+        lv2:symbol "Knob" ;
+        lv2:name "Control";
+        lv2:default 1.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 10.0 ;
+        units:unit mod:volts ;
+    ],
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 2;
+        lv2:symbol "Smoothing" ;
+        lv2:name "Smoothing" ;
+        lv2:default 1.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:toggled;
+    ],
+    [
+        a lv2:InputPort, lv2:ControlPort;
+        lv2:index 3;
+        lv2:symbol "Min";
+        lv2:name "Range Min";
+        lv2:default 0;
+        lv2:minimum -100000;
+        lv2:maximum 100000;
+    ],
+    [
+        a lv2:InputPort, lv2:ControlPort;
+        lv2:index 4;
+        lv2:symbol "Max";
+        lv2:name "Range Max";
+        lv2:default 100;
+        lv2:minimum -100000;
+        lv2:maximum 100000;
+    ],
+    [
+        a lv2:InputPort ,
+            atom:AtomPort ;
+        atom:bufferType atom:Sequence ;
+        atom:supports patch:Message ;
+        lv2:designation lv2:control ;
+        lv2:index 5 ;
+        lv2:symbol "in" ;
+        lv2:name "In"
+    ],
+    [
+        a lv2:OutputPort ,
+            atom:AtomPort ;
+        atom:bufferType atom:Sequence ;
+        atom:supports patch:Message ;
+        lv2:designation lv2:control ;
+        lv2:index 6;
+        lv2:symbol "out" ;
+        lv2:name "Out"
+    ],
+    [
+        a lv2:InputPort, lv2:ControlPort;
+        lv2:index 7;
+        lv2:symbol "INT";
+        lv2:name "Round";
+        lv2:portProperty lv2:toggled , lv2:integer ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+    ];
+
+    patch:writable
+        plug:unitstring;
+
+    state:state [
+        plug:unitstring "%" ;
+    ]
+.
